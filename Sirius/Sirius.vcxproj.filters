@@ -48,7 +48,10 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-    <ClCompile Include="src\Primitive.hpp">
+    <ClCompile Include="src\Material.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1250,10 +1253,22 @@
     <ClInclude Include="src\Model.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="src\Cube.hpp">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Lamp.hpp">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Light.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\BasicUnlit.frag" />
-    <None Include="shader\BasicUnlit.vert" />
+    <None Include="shader\Default.frag" />
+    <None Include="shader\Default.vert" />
     <None Include="include\glm\detail\func_common.inl">
       <Filter>標頭檔</Filter>
     </None>
@@ -1662,15 +1677,14 @@
     <None Include="include\glm\gtx\wrap.inl">
       <Filter>標頭檔</Filter>
     </None>
+    <None Include="shader\Lamp.frag" />
+    <None Include="shader\Lamp.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="texture\pussy.png">
-      <Filter>資源檔</Filter>
-    </Image>
-    <Image Include="texture\wolf.png">
+    <Image Include="texture\block\bamboo_planks.png">
       <Filter>資源檔</Filter>
     </Image>
   </ItemGroup>

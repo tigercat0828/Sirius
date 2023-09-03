@@ -6,14 +6,22 @@ std::vector<Vertex> Vertex::genList(float* vertices, int noVertices) {
 
 	int stride = sizeof(Vertex) / sizeof(float);
 	for (int i = 0; i < noVertices; i++) {
+		// position
 		result[i].position = glm::vec3(
 			vertices[i * stride + 0],
 			vertices[i * stride + 1],
 			vertices[i * stride + 2]
 		);
-		result[i].texCoord = glm::vec2(
+		// normal
+		result[i].normal = glm::vec3(
 			vertices[i * stride + 3],
-			vertices[i * stride + 4]
+			vertices[i * stride + 4],
+			vertices[i * stride + 5]
+		);
+		// texture coordinate
+		result[i].texCoord = glm::vec2(
+			vertices[i * stride + 6],
+			vertices[i * stride + 7]
 		);
 	}
 	return result;
@@ -61,11 +69,16 @@ void Mesh::Setup() {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
+	// set vertex attribute pointers
+	// position
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	// normal
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	// texCoord
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 	
 	glBindVertexArray(0);
 }

@@ -9,6 +9,7 @@
 #include "Texture.h"
 struct Vertex {
 	glm::vec3 position;
+	glm::vec3 normal;
 	glm::vec2 texCoord;
 	static std::vector<struct Vertex> genList(float* vertices, int noVertices);
 };
@@ -20,7 +21,7 @@ public:
 	GLuint VAO;
 	std::vector<Texture> textures;
 	Mesh();
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures = {});
 	void Render(Shader shader);
 	void CleanUp();
 private:

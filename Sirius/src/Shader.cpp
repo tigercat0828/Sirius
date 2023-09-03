@@ -1,7 +1,8 @@
 #include <spdlog/spdlog.h>
 #include "Shader.h"
 
-Shader::Shader(const char* vFileName, const char* fFileName) {
+Shader::Shader(std::string name,const char* vFileName, const char* fFileName) {
+	sName = name;
 	int success;
 	char infoLog[512];
 	GLuint vertexShader = CompileShader(vFileName, GL_VERTEX_SHADER);
@@ -52,41 +53,75 @@ GLuint Shader::CompileShader(const char* fileName, GLenum type) {
 	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(id, 512, nullptr, infoLog);
-		spdlog::error("Failed to compile shader {}", fileName);
+		
+		if (type == GL_VERTEX_SHADER) {
+			spdlog::error("Failed to compile [{}] vertex shader from [{}]", sName,fileName);
+		}
+		else {
+			spdlog::error("Failed to compile [{}] fragment shader from [{}]", sName, fileName);
+		}
+		spdlog::info("{}", infoLog);
+		system("pause");
 	}
 	return id;
 }
 
-void Shader::SetMat4(const std::string& para_name, glm::mat4 value) {
-	int location = glGetUniformLocation(Id, para_name.c_str());
+void Shader::SetMat4(const std::string& name, glm::mat4 value) {
+	int location = glGetUniformLocation(Id, name.c_str());
 #ifdef DEBUG
-	if (location == -1) TipUniformNotFound(para_name);
+	if (location == -1) TipUniformNotFound(name);
 #endif // DEBUG
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
-void Shader::SetInt(const std::string& para_name, int value) {
-	int location = glGetUniformLocation(Id, para_name.c_str());
+void Shader::SetInt(const std::string& name, int value) {
+	int location = glGetUniformLocation(Id, name.c_str());
 #ifdef DEBUG
-	if (location == -1) TipUniformNotFound(para_name);
+	if (location == -1) TipUniformNotFound(name);
 #endif // DEBUG
 	glUniform1i(location, value);
 }
-void Shader::SetFloat(const std::string& para_name, float value) {
-	int location = glGetUniformLocation(Id, para_name.c_str());
+void Shader::SetFloat(const std::string& name, float value) {
+	int location = glGetUniformLocation(Id, name.c_str());
 #ifdef DEBUG
-	if (location == -1) TipUniformNotFound(para_name);
+	if (location == -1) TipUniformNotFound(name);
 #endif // DEBUG
 	glUniform1f(location, value);
 }
-void Shader::SetVec3(const std::string& para_name, glm::vec3 value) {
-	int location = glGetUniformLocation(Id, para_name.c_str());
+void Shader::SetVec3(const std::string& name, glm::vec3 value) {
+	int location = glGetUniformLocation(Id, name.c_str());
 #ifdef DEBUG
-	if (location == -1) TipUniformNotFound(para_name);
+	if (location == -1) TipUniformNotFound(name);
 #endif // DEBUG
 	glUniform3fv(location, 1,glm::value_ptr(value));
 }
+
+void Shader::SetFloat3(const std::string& name, float v1, float v2, float v3) {
+	int location = glGetUniformLocation(Id, name.c_str());
+#ifdef DEBUG
+	if (location == -1) TipUniformNotFound(name);
+#endif // DEBUG
+	glUniform3f(location, v1, v2, v3);
+}
+void Shader::SetVec4(const std::string& name, glm::vec4 value) {
+	int location = glGetUniformLocation(Id, name.c_str());
+#ifdef DEBUG
+	if (location == -1) TipUniformNotFound(name);
+#endif // DEBUG
+	glUniform4fv(location, 1, glm::value_ptr(value));
+}
+
+void Shader::SetFloat4(const std::string& name, float v1, float v2, float v3, float v4) {
+	int location = glGetUniformLocation(Id, name.c_str());
+#ifdef DEBUG
+	if (location == -1) TipUniformNotFound(name);
+#endif // DEBUG
+	glUniform4f(location,v1,v2,v3,v4);
+}
+
+
+
 void Shader::TipUniformNotFound(const std::string& name) {
-	spdlog::error("Program({}) \"{}\" uniform not found in shader", Id, name);
+	spdlog::error("Program {}({}) \"{}\" uniform not found in shader", Id, sName, name);
 }
 

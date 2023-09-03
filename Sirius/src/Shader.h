@@ -14,16 +14,20 @@ class Shader {
 
 public:
 	GLuint Id;
-	Shader(const char* vFileName, const char* fFileName);
+	std::string sName;
+	Shader(std::string name ,const char* vFileName, const char* fFileName);
 	void Activate();
-	void SetMat4(const std::string& para_name, glm::mat4 value);
-	void SetInt(const std::string& para_name, int value);
-	void SetFloat(const std::string& para_name, float value);
-	void SetVec3(const std::string& para_name, glm::vec3 value);
+	void SetMat4(const std::string& name, glm::mat4 value);
+	void SetInt(const std::string& name, int value);
+	void SetVec3(const std::string& name, glm::vec3 value);
+	void SetVec4(const std::string& name, glm::vec4 value);
+	void SetFloat(const std::string& name, float value);
+	void SetFloat3(const std::string& name, float v1, float v2, float v3);
+	void SetFloat4(const std::string& name, float v1, float v2, float v3, float v4);
 	
 private:
 	std::string	LoadShaderSource(const char* fileName);
 	GLuint CompileShader(const char* fileName, GLenum type);
-	void TipUniformNotFound(const std::string& para_name);
+	void TipUniformNotFound(const std::string& name);
 };
 

@@ -49,6 +49,7 @@ void Texture::Load(bool filp) {
 	}
 	else {
 		spdlog::error("Failed to load image : {}", path);
+		
 	}
 	stbi_image_free(data);
 }

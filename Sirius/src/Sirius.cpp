@@ -17,7 +17,9 @@
 #include "Camera.h"
 #include "Screen.h"
 #include "Texture.h"
-#include "Primitive.hpp"
+#include "Cube.hpp"
+#include "Material.h"
+#include "Lamp.hpp"
 using namespace glm;
 
 
@@ -39,6 +41,8 @@ Camera camera(vec3(0 ,0.0f, 3));
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 Screen screen;
+
+
 int main() {
 	spdlog::info("Welcome to spdlog!");
 	
@@ -58,7 +62,6 @@ int main() {
 		return -1;
 	}
 	
-
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		spdlog::error("Failed to init GLAD");
 		return -1;
@@ -66,46 +69,58 @@ int main() {
 
 	screen.SetParameter();
 
-	Shader shader("shader/BasicUnlit.vert", "shader/BasicUnlit.frag");
+	Shader shader("Default","shader/Default.vert", "shader/Default.frag");
+	Shader lampShader("Lamp", "shader/Default.vert", "shader/Lamp.frag");
 
-	Cube cube(vec3(0, 0, -1), vec3(1.0));
+	Cube cube(Material::emerald ,vec3(0, 0, -1), vec3(1.0));
 	cube.Init();
 
-
+	Lamp lamp(vec3(1.0f), vec3(1.0f), vec3(1.0f), vec3(1.0f), vec3(-1.0f, -0.5f, -0.5f), vec3(0.25f));
+	lamp.Init();
 	while (!screen.ShouldClose()) {
 		
 		double currentTime = glfwGetTime();
 		deltaTime = currentTime - lastFrame;
 		lastFrame = currentTime;
 
-		glClearColor(.2f, .3f, .3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		ProcessInput(deltaTime);
+		screen.Update();
+
+		shader.Activate();
+		shader.SetVec3("ViewPos", camera.cameraPos);
+
+		lamp.pointLight.Render(shader);
 		
-		mat4 transform = mat4(1.0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		mat4 view = camera.GetViewMatrix();
 		mat4 projection = perspective(radians(camera.GetZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
-		shader.Activate();
+
 		shader.SetMat4("view", view);
 		shader.SetMat4("projection", projection);
 
-		shader.SetFloat("mixVal", mixVal);
-
 		cube.Render(shader);
 
-		glDrawArrays(GL_TRIANGLES, 0,36);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		lampShader.Activate();
+		lampShader.SetMat4("view", view);
+		lampShader.SetMat4("projection", projection);
+
+		lamp.Render(lampShader);
+
+
 
 		screen.NewFrame();
 	}
-	
+	cube.CleanUp();
+	lamp.CleanUp();
 	glfwTerminate();
 	return 0;
 }
 
 void WindowResize(GLFWwindow* window, int width, int height) {
+	glfwSetCursorPos(window, width / 2, height / 2);
 	glViewport(0, 0, width, height);
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;
